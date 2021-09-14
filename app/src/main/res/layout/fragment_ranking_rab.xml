@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.fragment.RankingRabFragment">
+
+   <RadioGroup
+       android:id="@+id/ranking_radio_group"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       android:gravity="center"
+       >
+      <RadioButton
+          android:id="@+id/radio_games"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/more_games"
+          android:checked="true"
+          />
+
+      <RadioButton
+          android:id="@+id/readio_wins"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/more_wins"
+          />
+
+   </RadioGroup>
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/ranking_recyclerview"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       />
+
+</LinearLayout>

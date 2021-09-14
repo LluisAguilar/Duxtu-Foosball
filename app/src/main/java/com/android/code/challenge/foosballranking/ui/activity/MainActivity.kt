@@ -3,105 +3,78 @@ package com.android.code.challenge.foosballranking.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.android.code.challenge.foosballranking.R
 import com.android.code.challenge.foosballranking.domain.mapper.GamesEntityToGamesMapper
-import com.android.code.challenge.foosballranking.domain.model.Game
-import com.android.code.challenge.foosballranking.domain.model.Score
 import com.android.code.challenge.foosballranking.domain.viewmodel.GameViewModel
+import com.android.code.challenge.foosballranking.ui.adapter.FragmentViewPagerAdapter
+import com.android.code.challenge.foosballranking.ui.fragment.AddGameFragment
+import com.android.code.challenge.foosballranking.ui.fragment.GamesTabFragment
+import com.android.code.challenge.foosballranking.ui.fragment.RankingRabFragment
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TabLayoutMediator.TabConfigurationStrategy{
 
     private lateinit var mGameViewModel: GameViewModel
     private var mGamesEntityToGamesMapper: GamesEntityToGamesMapper? = null
+
+    // Fragment for tab menu
+    private val gamesTabFragment = GamesTabFragment.newInstance()
+    private val rankingRabFragment = RankingRabFragment.newInstance()
+    private val addGameFragment = AddGameFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        scores_viewpager.adapter =  FragmentViewPagerAdapter(arrayListOf(gamesTabFragment, rankingRabFragment, addGameFragment), this)
+
+        TabLayoutMediator(tab_layout, scores_viewpager, this).attach()
+
         mGameViewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         mGamesEntityToGamesMapper = GamesEntityToGamesMapper()
 
-        /*mGameViewModel.insertGame(Game("Luis",2, "Juan", 3))
-        mGameViewModel.insertGame(Game("Luis",2, "Roberto", 3))
-        mGameViewModel.insertGame(Game("Miguel",2, "Juan", 3))
-        mGameViewModel.insertGame(Game("Luis",2, "Juan", 3))
-        mGameViewModel.insertGame(Game("Luis",2, "Angel", 3))
-        mGameViewModel.insertGame(Game("Luis",2, "Jose", 3))
-        mGameViewModel.insertGame(Game("Luis",2, "Juan", 3))*/
-
-        mGameViewModel.getAllGames().observe(this, {
-            val gamesList = mGamesEntityToGamesMapper?.map(it)
-            gamesList?.let {
-                getUserGamesWonRanking(it).forEach { println(it.username) }
-                println("------------------- Most played--------------------")
-                getUserGamesPlayedRanking(it).forEach { println(it.username) }
+        scores_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                callGamesData()
+                super.onPageSelected(position)
             }
         })
 
-
     }
 
-    private fun getUserGamesPlayedRanking(gamesList: List<Game>): ArrayList<Score> {
-        val userMap = HashMap<String, Int>()
+    override fun onResume() {
+        callGamesData()
 
-        if (gamesList.size > 0) {
-            for (x in 0 until gamesList.size) {
+        super.onResume()
+    }
 
-                if (userMap.containsKey(gamesList.get(x).player1)) {
-                    val count = userMap.get(gamesList.get(x).player1)!! + 1
-                    userMap.put(gamesList.get(x).player1, count)
-                } else {
-                    userMap.put(gamesList.get(x).player1, 1)
-                }
-
-                if (userMap.containsKey(gamesList.get(x).player2)) {
-                    val count = userMap.get(gamesList.get(x).player2)!! + 1
-                    userMap.put(gamesList.get(x).player2, count)
-                } else {
-                    userMap.put(gamesList.get(x).player2, 1)
-                }
+    private fun callGamesData() {
+        mGameViewModel.getAllGames().observe(this, {
+            val gamesList = mGamesEntityToGamesMapper?.map(it)
+            gamesList?.let {
+                gamesTabFragment.setGameData(it)
+                rankingRabFragment.setScoreData(it)
             }
-        }
-
-        val result = userMap.entries.sortedByDescending { it.value }
-        return  mapToList(result)
-
+        })
     }
 
-    private fun getUserGamesWonRanking(gamesList: List<Game>): ArrayList<Score> {
-        val userMap = HashMap<String, Int>()
+    override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+        when(position) {
 
-        if (gamesList.size > 0) {
-            for (x in 0 until gamesList.size) {
-                if (gamesList.get(x).points1 > gamesList.get(x).points2){
-                    if (userMap.containsKey(gamesList.get(x).player1)){
-                        val count = userMap.get(gamesList.get(x).player1)!! + 1
-                        userMap.put(gamesList.get(x).player1, count)
-                    } else {
-                        userMap.put(gamesList.get(x).player1, 1)
-                    }
-                } else if (gamesList.get(x).points1 < gamesList.get(x).points2){
-                    if (userMap.containsKey(gamesList.get(x).player2)){
-                        val count = userMap.get(gamesList.get(x).player2)!! + 1
-                        userMap.put(gamesList.get(x).player2, count)
-                    } else {
-                        userMap.put(gamesList.get(x).player2, 1)
-                    }
-                }
+            0 -> {
+                tab.text = getString(R.string.games)
             }
+            1 -> {
+                tab.text = getString(R.string.ranking)
+            }
+            2 -> {
+                tab.text = getString(R.string.add_games)
+            }
+
         }
-
-        val result = userMap.entries.sortedByDescending { it.value }
-
-        return mapToList(result)
-    }
-
-    private fun mapToList(result: List<MutableMap.MutableEntry<String, Int>>): ArrayList<Score> {
-        val scoreList = arrayListOf<Score>()
-        for (x in 0 until result.size){
-            scoreList.add(Score(result.get(x).key,result.get(x).value))
-        }
-        return scoreList
     }
 
 }

@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Foosball Ranking</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="games">Games</string>
+    <string name="ranking">Ranking</string>
+    <string name="add_games">Add Game</string>
+    <string name="game">Game</string>
+    <string name="player_1">Player 1</string>
+    <string name="player_2">Player 2</string>
+    <string name="winner">Winner</string>
+    <string name="tie">TIE</string>
+    <string name="more_games">More Games</string>
+    <string name="more_wins">More Wins</string>
 </resources>
