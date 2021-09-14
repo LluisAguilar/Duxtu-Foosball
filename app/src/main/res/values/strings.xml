@@ -12,4 +12,12 @@
     <string name="tie">TIE</string>
     <string name="more_games">More Games</string>
     <string name="more_wins">More Wins</string>
+    <string name="score">Score</string>
+    <string name="add_a_game_score">Add a game score</string>
+    <string name="continue_txt">Add</string>
+    <string name="score_p1">Score player 1</string>
+    <string name="score_p2">Score player 2</string>
+    <string name="empty_fields">Empty fields</string>
+    <string name="added_successfully">Added successfully</string>
+    <string name="no_data_found">No data found</string>
 </resources>

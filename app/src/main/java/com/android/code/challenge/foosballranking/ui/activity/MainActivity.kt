@@ -3,9 +3,9 @@ package com.android.code.challenge.foosballranking.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import com.android.code.challenge.foosballranking.R
 import com.android.code.challenge.foosballranking.domain.mapper.GamesEntityToGamesMapper
+import com.android.code.challenge.foosballranking.domain.model.Game
 import com.android.code.challenge.foosballranking.domain.viewmodel.GameViewModel
 import com.android.code.challenge.foosballranking.ui.adapter.FragmentViewPagerAdapter
 import com.android.code.challenge.foosballranking.ui.fragment.AddGameFragment
@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), TabLayoutMediator.TabConfigurationStrategy{
+class MainActivity : AppCompatActivity(), TabLayoutMediator.TabConfigurationStrategy, TabLayout.OnTabSelectedListener {
 
     private lateinit var mGameViewModel: GameViewModel
     private var mGamesEntityToGamesMapper: GamesEntityToGamesMapper? = null
@@ -36,18 +36,11 @@ class MainActivity : AppCompatActivity(), TabLayoutMediator.TabConfigurationStra
         mGameViewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         mGamesEntityToGamesMapper = GamesEntityToGamesMapper()
 
-        scores_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                callGamesData()
-                super.onPageSelected(position)
-            }
-        })
-
+        tab_layout.addOnTabSelectedListener(this)
     }
 
     override fun onResume() {
         callGamesData()
-
         super.onResume()
     }
 
@@ -59,6 +52,7 @@ class MainActivity : AppCompatActivity(), TabLayoutMediator.TabConfigurationStra
                 rankingRabFragment.setScoreData(it)
             }
         })
+
     }
 
     override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
@@ -75,6 +69,20 @@ class MainActivity : AppCompatActivity(), TabLayoutMediator.TabConfigurationStra
             }
 
         }
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab?) {
+        callGamesData()
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab?) {
+    }
+
+    override fun onTabReselected(tab: TabLayout.Tab?) {
+    }
+
+    fun saveGame(game: Game) {
+        mGameViewModel.insertGame(game)
     }
 
 }

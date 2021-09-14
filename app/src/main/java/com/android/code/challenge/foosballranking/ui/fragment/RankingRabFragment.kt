@@ -42,6 +42,12 @@ class RankingRabFragment : Fragment(), RadioGroup.OnCheckedChangeListener {
             mView.radio_games.isChecked = true
             mView.ranking_recyclerview.adapter = ScoreRecyclerViewAdapter(it, getUserGamesPlayedRanking(mGameList))
         }
+
+        if (scoresList.size > 0){
+            mView.not_data_tv_ranking.visibility = View.GONE
+            mView.ranking_content_layout.visibility = View.VISIBLE
+        }
+
     }
 
     companion object {
